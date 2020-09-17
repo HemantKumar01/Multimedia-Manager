@@ -1,0 +1,63 @@
+{
+  "name": "duplichecker",
+  "productName": "Multimedia Manager 1.2",
+  "version": "1.2.0",
+  "description": "delete duplicate and sort images and videos images at a go!",
+  "main": "electron-main.js",
+  "keywords": [
+    "duplichecker",
+    "duplicate",
+    "images",
+    "multimedia manager 1.2.0",
+    "multimedia manager 1.2",
+    "multimedia manager",
+    "sort"
+  ],
+  "author": "HemTech",
+  "license": "MIT", 
+  "scripts": {
+    "start": "electron .",
+    "buildi": "electron-builder",
+    "dist":"build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "devDependencies": {
+    "electron": "^9.2.1",
+    "electron-builder": "^22.8.0",
+    "webpack": "^4.44.1"
+  },
+  "dependencies": {},
+  "build": {
+
+  "directories":{
+      "buildResources":"./**"
+  },
+  "files":[
+    "build",
+    "node_modules",
+    "nulshock",
+    "package.json",
+    "index.html",
+    "package-lock.json",
+    "electron-main.js",
+    "src/*",
+    "src"
+    
+  ],
+  
+    "appId": "duplichecker",
+      "win": {
+      "target":"nsis",
+      "icon": "src/icon.ico"
+    },
+    
+    "nsis": {
+      "installerIcon": "src/icon.ico",
+      "uninstallerIcon": "src/icon.ico",
+      "uninstallDisplayName": "Multimedia Manager",
+      "license": "license.txt",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

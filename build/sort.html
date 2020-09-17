@@ -1,0 +1,201 @@
+<html>
+  <head>
+    <title>SORT TO FILES</title>
+	<style>
+body{margin:0;font-weight:700; background-image:linear-gradient(#403f3f,#000000); color:white;}
+hr{color: coral; background-color: coral;}
+.topBar{ width:100%; top:0; height:100px; padding:0; background-image:linear-gradient(#FF7043,#BF360C); color:white; margin:0px; box-shadow: 0 0 20px 1px black;  text-shadow: 1px 11px 20px black;}
+.barHolder{background-color:white; width:90%; margin-top:20px; margin-left:5%; border:10px; border-color:black;}
+.back{position:absolute; background-color:rgb(4, 131, 0); color:white; height:40px; margin:20px; width:100px;}
+.back:hover{background-color: aquamarine; color: black;}
+.bar{background-image:linear-gradient(orange,red); width:1%; height:30px; border:0; margin:0; border:5px; border-color:red;}
+.selectC{color:white; background-image:linear-gradient(#FF7043,#BF360C); border-radius:0px; font-size:20;  height:50px; margin:10px; border:10px; padding:0; margin-left:30px;}
+.selectC:hover{background-image:linear-gradient(#BF360C,#FF7043);}
+#perc{margin-right:30px; color:white; font-weight:900; font-weight:bold;}
+.options{display:none; color:white;}
+#holder{margin:20px;}
+#complete{display:none; margin:20px;}
+#reload{height:70px; background-color:orange; color:white;}
+#reload:hover{background-color: brown;}
+#submit{padding: 20px; background-color: coral; color: white;   font-weight: 900;   box-shadow: 0 0 20px 1px rgb(224, 217, 217);}
+#submit:hover{background-color: darkred;}
+	
+	</style>
+  </head>
+  <body>
+   <div class='topBar'><button class="back" onclick="window.location='../index.html'"> <- BACK</button><center> <h1>SORT TO FILES</h1><h3>v. 1.0.2</h3></center></div>
+<hr>
+   <h3 style="color:orange;">Sort images and videos on the go!</h3>
+<hr>
+<div id='holder'>
+	<button id='select' class='selectC'>SELECT A FILE</button>	
+	<div id='selected'>SELECTED-<br></div>
+	<div id='options' class='options'>
+<hr>
+	MOVE IMAGES TO-<div id='i'></div>
+	<button id='selectForI' onclick='dialogS("img")'>SELECT</button>
+<hr>
+	MOVE VIDEOS TO-<div id='v'></div>
+	<button  id='selectForV' onclick='dialogS("vid")'>SELECT</button>
+<hr>
+<button type='button' id='submit' onclick='sort()'>START SORTING</button>
+	</div>
+	
+
+
+</div>
+<div class='barHolder' style="border:2px; border-color:black; border-style:solid;">
+	<div id='bar' class='bar' style="border:1px; border-color:#ff5e00; border-style:solid;">
+	</div>
+	</div>
+<p id='perc' align='right'>0%</p>
+<br>
+<hr>
+<div id='complete'>
+	SORTING COMPLETED!<br>
+	<button id="reload" onclick="window.location.reload()">SORT ANOTHER FILE</button>
+</div>
+
+
+<script> 
+var {ipcRenderer}=require('electron');
+var {dialog}=require('electron').remote;
+var fs=require('fs');
+var path=require('path');
+var file;
+var added=[];
+var contents=[],conIndex=0;
+var vidDir, imgDir;
+var b=1,barLength;
+
+added.pop(0);
+
+document.getElementById('select').onclick=async function(){
+
+		dialog.showOpenDialog({title:'SELECT A FILE FOR SORTING', buttonLabel:'SELECT',properties:['openDirectory']}).then(async function(result){
+			
+				if(result!=undefined && result!=null && added.indexOf(result.filePaths[0])==(-1)){
+					
+						file=result.filePaths[0];
+						added.push(result.filePaths[0]);
+						await addToCon();
+					
+				}
+			
+			});
+	}
+
+			function dialogS(val){
+				dialog.showOpenDialog({title:'FOLDER', buttonLabel:'SELECT',properties:['openDirectory']}).then(result=>{
+				
+					if(val=='vid'){
+						vidDir=result.filePaths[0];
+						document.getElementById('v').innerHTML=result.filePaths;
+						document.getElementById('selectForV').innerHTML="change";
+
+					}else if(val=='img'){
+						imgDir=result.filePaths[0];
+						document.getElementById('i').innerHTML=result.filePaths;
+						document.getElementById('selectForI').innerHTML="change";
+					}
+			});
+		}
+		
+		
+			
+		
+		
+		function addToCon(){
+			return new Promise((resolve,reject)=>{
+			console.log('adding');
+
+			document.getElementById('options').style.display='block';
+           	document.getElementById('selected').innerHTML+=file+'<br>';
+
+			var data=fs.readdirSync(file.toString());
+				
+			if(conIndex==0){
+				console.log('reading data');
+					
+					for(var a=0;a<data.length;a++){
+							contents[a]=file.toString()+"\\"+data[a];
+					}
+				
+				document.getElementById('select').innerHTML="+ ADD FILES";
+				conIndex=1;
+						
+						if(data.length!=0){
+							barLength=data.length;
+							resolve();
+						}else{
+							barLength=1;
+							loadBar(1);
+							resolve();
+						}
+			}else{
+				console.log('reading data');
+						
+					for(var aa=0;aa<data.length;aa++){
+							contents.push(file.toString()+"\\"+data[aa]);
+					}
+						
+				if(contents.length!=0){
+					barLength=contents.length;
+					resolve();
+				}else{
+					barLength=1;
+					loadBar(1);
+					resolve();
+				}
+			}		
+		});
+	}
+			function sort(){
+
+				if(imgDir!=undefined && imgDir!=null && vidDir!=undefined && vidDir!=null){
+
+						document.getElementById('holder').style.display="none";
+			
+						var i;
+						console.log('starting loop');
+							for(i=0;i<contents.length;i++){
+								console.log(path.extname(contents[i]));
+					
+								console.log(contents[i]);
+
+								if(path.extname(contents[i])=='.png' || path.extname(contents[i])=='.jpg' || path.extname(contents[i])=='.jpeg' || path.extname(contents[i])=='.tiff' || path.extname(contents[i])=='.jp2' || path.extname(contents[i])=='.bmp' || path.extname(contents[i])=='.raw' || path.extname(contents[i])=='.svg' || path.extname(contents[i])=='.JPG'){
+									fs.renameSync((contents[i]),(imgDir+"\\"+path.basename(contents[i])));
+									loadBar(1);							
+									console.log("renamed"+contents[i]);
+						
+								}else if(path.extname(contents[i])=='.mp4' || path.extname(contents[i])=='.mp3' || path.extname(contents[i])=='.gif' || path.extname(contents[i])=='.ogg' || path.extname(contents[i])=='.3gp' || path.extname(contents[i])=='.wmv' || path.extname(contents[i])=='.flv' || path.extname(contents[i])=='.mov' || path.extname(contents[i])=='.webm' || path.extname(contents[i])=='.mkv' || path.extname(contents[i])=='.avi' ||path.extname(contents[i])=='.mpg' || path.extname(contents[i])=='.MPG'|| path.extname(contents[i])=='.3gpp'){
+									fs.renameSync((contents[i]),(vidDir+"\\"+path.basename(contents[i])));
+									loadBar(1);
+								}else{
+									loadBar(1);
+								}
+							}
+			}
+		}
+				
+			
+		
+			
+		
+		
+		function loadBar(comp){
+		b+=parseInt(comp);
+		var l=parseInt((parseInt(b)/barLength)*100);
+		var bar=document.getElementById('bar');
+		if(l<=100){
+		bar.style.width=l+'%';
+		document.getElementById('perc').innerHTML=l+'%';
+			if(l==100){
+				document.getElementById('complete').style.display="block";
+			}
+		}
+		}
+      </script> 
+
+  </body>
+</html>
