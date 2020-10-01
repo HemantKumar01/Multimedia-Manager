@@ -22,7 +22,14 @@ note- below should be installed from cmd in the project firectory
 3. `nom i electron-builder --only=dev`
 ## How to Test
 After installing dev dependencies mentioned above you can try on you console
+
 `npm start`
+
 Or for building  system installer
-Try `npm run buildi`
+Try 
+
+`npm run buildi`
+
 And then install using the nsis installer so formed in the distance folder. After installing it will run.
+# ANY MODIFICATION OR SUGGESTION WILL BE APPRECIATED
+this is a very basic program and can be extended  any new code or modification by anyone will be appreciated in the development of multimedia managerm it is made open source for the purpose of learning.
