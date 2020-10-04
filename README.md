@@ -1,4 +1,4 @@
-# multimediaManager
+# Multimedia-Manager
 
 ## INFO
 Multimedia Manager is a node and electron based complete standalone application for the following functions-
