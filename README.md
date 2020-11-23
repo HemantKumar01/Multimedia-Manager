@@ -1,3 +1,7 @@
+<div style="background-color:black">
+<img src=/src/icon.ico stye="background-color:black">
+</div>
+
 # Multimedia-Manager
 
 ## INFO
