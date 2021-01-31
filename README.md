@@ -31,13 +31,15 @@ Multimedia Manager is a node and electron based complete standalone application 
 3. Easy to use
 ## Requirements
 1. Node.js
-note- below should be installed from cmd in the project firectory
-2. `npm i electron --save-dev`
-3. `npm i electron-builder --only=dev`
+note- below should be installed from cmd in the project directory
+
+2. `npm i electron`
+
 ## How to Test
+
 After installing dev dependencies mentioned above you can try on you console
 
-`npm start`
+>`npm start`
 
 Or for building  system installer
 Try 
